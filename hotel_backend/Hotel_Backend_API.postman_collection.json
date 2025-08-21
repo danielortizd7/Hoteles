@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "hotel-backend-api",
+		"name": "Hotel Backend API",
+		"description": "API para Sistema de Gestión Hotelera",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accounts/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "login", ""]
+						}
+					}
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/profile/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "profile", ""]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "logout", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "List Rooms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/rooms/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rooms", "rooms", ""]
+						}
+					}
+				},
+				{
+					"name": "Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/rooms/dashboard_stats/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rooms", "rooms", "dashboard_stats", ""]
+						}
+					}
+				},
+				{
+					"name": "Available Rooms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/rooms/available/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rooms", "rooms", "available", ""]
+						}
+					}
+				},
+				{
+					"name": "Change Room Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"occupied\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/rooms/rooms/1/change_status/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rooms", "rooms", "1", "change_status", ""]
+						}
+					}
+				},
+				{
+					"name": "Room Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/rooms/room-types/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "rooms", "room-types", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventory/products/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventory", "products", ""]
+						}
+					}
+				},
+				{
+					"name": "Low Stock Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventory/products/low_stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventory", "products", "low_stock", ""]
+						}
+					}
+				},
+				{
+					"name": "Adjust Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"adjustment_type\": \"increase\",\n    \"quantity\": 5,\n    \"reason\": \"Compra nueva\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inventory/products/1/adjust_stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventory", "products", "1", "adjust_stock", ""]
+						}
+					}
+				},
+				{
+					"name": "Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventory/categories/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventory", "categories", ""]
+						}
+					}
+				},
+				{
+					"name": "Stock Movements",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventory/stock-movements/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventory", "stock-movements", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "API Root",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{base_url}}/api/",
+					"host": ["{{base_url}}"],
+					"path": ["api", ""]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

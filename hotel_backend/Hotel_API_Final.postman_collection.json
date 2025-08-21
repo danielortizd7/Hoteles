@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "hotel-backend-api-final",
+		"name": "Hotel MOTEL ECLIPSE - API Final",
+		"description": "API para Sistema de Gestión Hotelera - URLs Finales en Español",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Autenticación",
+			"item": [
+				{
+					"name": "Login - Cuentas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cuentas/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cuentas", "login", ""]
+						}
+					}
+				},
+				{
+					"name": "Login - Usuarios",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"martha\",\n    \"password\": \"martha123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", "login", ""]
+						}
+					}
+				},
+				{
+					"name": "Perfil Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cuentas/perfil/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cuentas", "perfil", ""]
+						}
+					}
+				},
+				{
+					"name": "Cerrar Sesión",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/cerrar-sesion/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", "cerrar-sesion", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏠 Habitaciones",
+			"item": [
+				{
+					"name": "Lista de Habitaciones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/habitaciones/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "habitaciones", ""]
+						}
+					}
+				},
+				{
+					"name": "Tipos de Habitación",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/habitaciones/tipos/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "habitaciones", "tipos", ""]
+						}
+					}
+				},
+				{
+					"name": "Dashboard Estadísticas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/habitaciones/dashboard/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "habitaciones", "dashboard", ""]
+						}
+					}
+				},
+				{
+					"name": "Habitaciones Disponibles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/habitaciones/disponibles/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "habitaciones", "disponibles", ""]
+						}
+					}
+				},
+				{
+					"name": "Cambiar Estado Habitación",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"occupied\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/habitaciones/1/change_status/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "habitaciones", "1", "change_status", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📦 Inventario",
+			"item": [
+				{
+					"name": "Lista de Productos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventario/productos/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventario", "productos", ""]
+						}
+					}
+				},
+				{
+					"name": "Categorías",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventario/categorias/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventario", "categorias", ""]
+						}
+					}
+				},
+				{
+					"name": "Movimientos de Stock",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventario/movimientos-stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventario", "movimientos-stock", ""]
+						}
+					}
+				},
+				{
+					"name": "Productos con Stock Bajo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/inventario/productos/low_stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventario", "productos", "low_stock", ""]
+						}
+					}
+				},
+				{
+					"name": "Ajustar Stock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"adjustment_type\": \"increase\",\n    \"quantity\": 10,\n    \"reason\": \"Compra nueva de mercancía\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inventario/productos/1/adjust_stock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "inventario", "productos", "1", "adjust_stock", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 Usuarios",
+			"item": [
+				{
+					"name": "Lista de Usuarios (Usuarios)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/usuarios/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", "usuarios", ""]
+						}
+					}
+				},
+				{
+					"name": "Gestionar Usuarios (Cuentas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cuentas/usuarios/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cuentas", "usuarios", ""]
+						}
+					}
+				},
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"nuevo_usuario\",\n    \"email\": \"nuevo@motel.com\",\n    \"first_name\": \"Nuevo\",\n    \"last_name\": \"Usuario\",\n    \"password\": \"password123\",\n    \"role\": \"receptionist\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cuentas/usuarios/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cuentas", "usuarios", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🌐 API Info",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{base_url}}/api/",
+					"host": ["{{base_url}}"],
+					"path": ["api", ""]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
