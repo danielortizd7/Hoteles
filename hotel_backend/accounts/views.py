@@ -1,6 +1,33 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
+from rest_framework.res@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def health_check(request):
+    """
+    Endpoint simple para verificar que la API funciona
+    """
+    return Response({
+        'status': 'OK',
+        'message': 'API funcionando correctamente',
+        'timestamp': '2025-08-22'
+    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def simple_test(request):
+    """
+    Endpoint ultra simple sin decoradores
+    """
+    from django.http import JsonResponse
+    import os
+    
+    return JsonResponse({
+        'test': 'OK',
+        'simple': True,
+        'debug': os.environ.get('DEBUG', 'NOT_SET'),
+        'allowed_hosts': os.environ.get('ALLOWED_HOSTS', 'NOT_SET'),
+        'database_url': 'SET' if os.environ.get('DATABASE_URL') else 'NOT_SET',
+        'django_settings': os.environ.get('DJANGO_SETTINGS_MODULE', 'NOT_SET')
+    })t Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_exempt

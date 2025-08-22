@@ -22,45 +22,26 @@ def api_root(request):
     return JsonResponse({
         'message': 'API Backend Hotel MOTEL ECLIPSE',
         'version': '1.0',
+        'status': 'OK',
         'endpoints': {
-            'administracion': '/admin/',
             'api': '/api/',
-            'cuentas': {
-                'login': '/api/cuentas/login/',
-                'perfil': '/api/cuentas/perfil/',
-                'usuarios': '/api/cuentas/usuarios/'
-            },
-            'usuarios': {
-                'login': '/api/usuarios/login/',
-                'cerrar_sesion': '/api/usuarios/cerrar-sesion/',
-                'usuarios': '/api/usuarios/usuarios/'
-            },
-            'habitaciones': {
-                'lista': '/api/habitaciones/',
-                'tipos': '/api/habitaciones/tipos/',
-                'dashboard': '/api/habitaciones/dashboard/',
-                'disponibles': '/api/habitaciones/disponibles/'
-            },
-            'inventario': {
-                'productos': '/api/inventario/productos/',
-                'categorias': '/api/inventario/categorias/',
-                'movimientos': '/api/inventario/movimientos-stock/',
-                'stock_bajo': '/api/inventario/productos/low_stock/'
-            },
-            'documentacion': '/api/docs/'
+            'accounts': '/api/accounts/',
+            'test': '/test/'
         }
+    })
+
+def simple_health(request):
+    """Vista ultra simple para test"""
+    return JsonResponse({
+        'status': 'OK',
+        'message': 'Servidor funcionando',
+        'test': True
     })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('test/', simple_health, name='simple-test'),
     path('api/', api_root, name='api-root'),
-    path('api/cuentas/', include('accounts.urls')),
-    path('api/usuarios/', include('accounts.urls')),  # Alias para usuarios
-    path('api/habitaciones/', include('rooms.urls')),
-    path('api/inventario/', include('inventory.urls')),
-    # URLs en inglés para compatibilidad
     path('api/accounts/', include('accounts.urls')),
-    path('api/rooms/', include('rooms.urls')),
-    path('api/inventory/', include('inventory.urls')),
     path('', api_root, name='home'),
 ]
