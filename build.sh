@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o errexit
 
 # Script de build para Render
 echo "🚀 Iniciando despliegue de Hotel MOTEL ECLIPSE Backend..."
@@ -17,6 +18,10 @@ python manage.py collectstatic --noinput
 # Aplicar migraciones
 echo "🗄️ Aplicando migraciones de base de datos..."
 python manage.py migrate
+
+# Crear usuario administrador
+echo "👤 Creando usuario administrador..."
+python manage.py create_admin
 
 # Cargar datos iniciales (solo si no existen)
 echo "📊 Cargando datos iniciales..."

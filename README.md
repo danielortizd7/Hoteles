@@ -101,7 +101,7 @@ python manage.py runserver
 ```
 SECRET_KEY=tu_secret_key_para_produccion
 DEBUG=False
-DATABASE_URL=postgresql://usuario:password@host:puerto/database
+DATABASE_URL=postgresql://postgres.pmzfwxabqlbzpvkfinpr:Nirvana+1xJd7M@aws-1-sa-east-1.pooler.supabase.com:6543/postgres
 ALLOWED_HOSTS=tu-app-name.onrender.com,localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=https://tu-frontend.vercel.app,http://localhost:3000
 ```
