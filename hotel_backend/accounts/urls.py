@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, login_view, logout_view, profile_view, create_test_user, debug_info
+from .views import UserViewSet, login_view, logout_view, profile_view, create_test_user, debug_info, health_check
 
 router = DefaultRouter()
 router.register(r'usuarios', UserViewSet)
@@ -16,4 +16,5 @@ urlpatterns = [
     # Endpoints temporales para debug
     path('create-test-user/', create_test_user, name='create-test-user'),
     path('debug/', debug_info, name='debug'),
+    path('health/', health_check, name='health'),
 ]

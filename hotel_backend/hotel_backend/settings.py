@@ -179,5 +179,16 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only in development
 
+# CSRF Configuration for API
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://eclipse-backend-so8x.onrender.com,http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+
+# Para APIs REST, podemos exentar ciertas rutas del CSRF
+CSRF_EXEMPT_URLS = [
+    r'^/api/',
+]
+
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'

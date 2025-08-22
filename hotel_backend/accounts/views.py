@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import User
 from .serializers import UserSerializer, UserCreateSerializer, LoginSerializer
 
@@ -25,6 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@csrf_exempt
 def login_view(request):
     """
     API endpoint para login de usuarios
@@ -81,6 +84,7 @@ def profile_view(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@csrf_exempt
 def create_test_user(request):
     """
     Endpoint temporal para crear usuario de prueba
@@ -124,9 +128,33 @@ def debug_info(request):
     """
     Endpoint para información de debug
     """
+    try:
+        users_count = User.objects.count()
+        users_list = list(User.objects.values_list('username', flat=True)[:10])
+        
+        return Response({
+            'success': True,
+            'users_count': users_count,
+            'users_list': users_list,
+            'debug': True,
+            'message': 'Debug endpoint funcionando correctamente'
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e),
+            'debug': True,
+            'message': 'Error en debug endpoint'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def health_check(request):
+    """
+    Endpoint simple para verificar que la API funciona
+    """
     return Response({
-        'success': True,
-        'users_count': User.objects.count(),
-        'users_list': [u.username for u in User.objects.all()[:10]],
-        'debug': True
+        'status': 'OK',
+        'message': 'API funcionando correctamente',
+        'timestamp': '2025-08-21'
     }, status=status.HTTP_200_OK)
