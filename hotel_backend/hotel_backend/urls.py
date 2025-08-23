@@ -43,5 +43,7 @@ urlpatterns = [
     path('test/', simple_health, name='simple-test'),
     path('api/', api_root, name='api-root'),
     path('api/accounts/', include('accounts.urls')),
+    path('api/rooms/', include('rooms.urls')),
+    path('api/inventory/', include('inventory.urls')),
     path('', api_root, name='home'),
 ]

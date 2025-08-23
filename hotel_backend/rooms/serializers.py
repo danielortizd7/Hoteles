@@ -6,8 +6,13 @@ class RoomTypeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = RoomType
-        fields = ['id', 'name', 'display_name', 'description', 'base_price_5h', 'icon', 'created_at']
+        fields = ['id', 'name', 'display_name', 'description', 'base_price_5h', 'created_at']
         read_only_fields = ['id', 'created_at']
+
+class RoomTypeCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoomType
+        fields = ['name', 'description', 'base_price_5h']
 
 class RoomSerializer(serializers.ModelSerializer):
     room_type_detail = RoomTypeSerializer(source='room_type', read_only=True)

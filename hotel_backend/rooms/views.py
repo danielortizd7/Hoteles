@@ -3,12 +3,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Count
 from .models import Room, RoomType
-from .serializers import RoomSerializer, RoomTypeSerializer, RoomCreateSerializer
+from .serializers import RoomSerializer, RoomTypeSerializer, RoomCreateSerializer, RoomTypeCreateSerializer
 
 class RoomTypeViewSet(viewsets.ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return RoomTypeCreateSerializer
+        return RoomTypeSerializer
 
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.select_related('room_type').all()
