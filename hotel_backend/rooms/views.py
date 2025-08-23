@@ -8,7 +8,7 @@ from .serializers import RoomSerializer, RoomTypeSerializer, RoomCreateSerialize
 class RoomTypeViewSet(viewsets.ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Temporalmente público
     
     def get_serializer_class(self):
         if self.action == 'create':
@@ -18,7 +18,7 @@ class RoomTypeViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.select_related('room_type').all()
     serializer_class = RoomSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Temporalmente público
     
     def get_serializer_class(self):
         if self.action == 'create':
