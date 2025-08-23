@@ -27,9 +27,9 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
-@csrf_exempt
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@csrf_exempt
 def login_view(request):
     """
     API endpoint para login de usuarios
@@ -84,9 +84,9 @@ def profile_view(request):
         'user': serializer.data
     }, status=status.HTTP_200_OK)
 
-@csrf_exempt
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@csrf_exempt
 def create_test_user(request):
     """
     Endpoint temporal para crear usuario de prueba
