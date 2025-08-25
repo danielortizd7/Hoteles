@@ -19,6 +19,25 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError("Las contraseñas no coinciden")
+        
+        # Validar permisos de creación según rol
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            target_role = attrs.get('role')
+            current_user = request.user
+            
+            # Solo super admin puede crear otros super admins
+            if target_role == 'super_admin' and not current_user.is_super_admin:
+                raise serializers.ValidationError("Solo super administradores pueden crear otros super administradores")
+            
+            # Solo super admin puede crear admins
+            if target_role == 'admin' and not current_user.can_create_admins:
+                raise serializers.ValidationError("Solo super administradores pueden crear administradores")
+            
+            # Admin y super admin pueden crear recepcionistas
+            if target_role == 'receptionist' and not current_user.can_manage_users:
+                raise serializers.ValidationError("No tienes permisos para crear usuarios")
+        
         return attrs
     
     def create(self, validated_data):

@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from django.db.models import Count
 from .models import Room, RoomType
 from .serializers import RoomSerializer, RoomTypeSerializer, RoomCreateSerializer, RoomTypeCreateSerializer
+from accounts.permissions import IsReceptionistOrHigher, IsAdminOrSuperAdmin
 
 class RoomTypeViewSet(viewsets.ModelViewSet):
     queryset = RoomType.objects.all()
     serializer_class = RoomTypeSerializer
-    permission_classes = [permissions.AllowAny]  # Temporalmente público
+    permission_classes = [IsAdminOrSuperAdmin]  # Solo Admin y Super Admin pueden gestionar tipos
     
     def get_serializer_class(self):
         if self.action == 'create':
@@ -18,14 +19,30 @@ class RoomTypeViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.select_related('room_type').all()
     serializer_class = RoomSerializer
-    permission_classes = [permissions.AllowAny]  # Temporalmente público
+    permission_classes = [IsReceptionistOrHigher]  # Recepcionistas y superiores pueden gestionar habitaciones
+    
+    def get_permissions(self):
+        """
+        Permisos específicos por acción
+        """
+        if self.action in ['create', 'destroy']:
+            # Solo Admin y Super Admin pueden crear/eliminar habitaciones
+            permission_classes = [IsAdminOrSuperAdmin]
+        elif self.action in ['update', 'partial_update', 'change_status']:
+            # Recepcionistas y superiores pueden actualizar y cambiar estado
+            permission_classes = [IsReceptionistOrHigher]
+        else:
+            # Ver habitaciones: todos los roles autenticados
+            permission_classes = [IsReceptionistOrHigher]
+        
+        return [permission() for permission in permission_classes]
     
     def get_serializer_class(self):
         if self.action == 'create':
             return RoomCreateSerializer
         return RoomSerializer
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[IsReceptionistOrHigher])
     def dashboard_stats(self, request):
         """
         Endpoint para obtener estadísticas del dashboard
@@ -57,7 +74,7 @@ class RoomViewSet(viewsets.ModelViewSet):
             'type_breakdown': type_counts
         })
     
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsReceptionistOrHigher])
     def change_status(self, request, pk=None):
         """
         Endpoint para cambiar el estado de una habitación
@@ -80,7 +97,7 @@ class RoomViewSet(viewsets.ModelViewSet):
             'room': RoomSerializer(room).data
         })
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[IsReceptionistOrHigher])
     def available(self, request):
         """
         Endpoint para obtener solo habitaciones disponibles

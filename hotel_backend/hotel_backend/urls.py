@@ -42,8 +42,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', simple_health, name='simple-test'),
     path('api/', api_root, name='api-root'),
+    
+    # Apps legacy (mantener compatibilidad)
     path('api/accounts/', include('accounts.urls')),
     path('api/rooms/', include('rooms.urls')),
     path('api/inventory/', include('inventory.urls')),
+    
+    # Dominios nuevos
+    path('api/domains/users/', include('users.urls')),
+    
     path('', api_root, name='home'),
 ]

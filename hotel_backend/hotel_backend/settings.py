@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,8 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'accounts',
+    'users.apps.UsersConfig',  # Dominio de usuarios
+    # Apps legacy (mantener temporalmente)
     'rooms',
     'reservations',
     'inventory',
@@ -62,7 +66,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Comentado para desarrollo local
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',  # Temporalmente comentado para APIs
@@ -163,11 +167,17 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django REST Framework Configuration
+_auth_classes = [
+    'rest_framework.authentication.TokenAuthentication',
+]
+try:
+    import rest_framework_simplejwt  # noqa: F401
+    _auth_classes.insert(0, 'rest_framework_simplejwt.authentication.JWTAuthentication')
+except ImportError:
+    pass
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',  # Comentado para evitar CSRF
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': _auth_classes,
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -177,6 +187,24 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ],
 }
+
+# SimpleJWT configuration
+try:
+    SIMPLE_JWT = {
+        'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+        'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+        'ROTATE_REFRESH_TOKENS': True,
+        'BLACKLIST_AFTER_ROTATION': True,
+        'UPDATE_LAST_LOGIN': True,
+        'ALGORITHM': 'HS256',
+        'SIGNING_KEY': SECRET_KEY,
+        'AUTH_HEADER_TYPES': ('Bearer',),
+        'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+        'USER_ID_FIELD': 'id',
+        'USER_ID_CLAIM': 'user_id',
+    }
+except NameError:
+    pass
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = config(
