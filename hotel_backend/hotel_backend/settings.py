@@ -35,6 +35,7 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = [
         'eclipse-backend-so8x.onrender.com',
+        'hotel-motel-eclipse-backend.onrender.com',
         '*.onrender.com',
         'localhost',
         '127.0.0.1'
@@ -66,7 +67,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Comentado para desarrollo local
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Habilitado para producción
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',  # Temporalmente comentado para APIs
@@ -209,17 +210,18 @@ except NameError:
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS', 
-    default='http://localhost:3000,http://127.0.0.1:3000'
+    default='http://localhost:3000,http://127.0.0.1:3000,https://eclipse-backend-so8x.onrender.com,https://hotel-motel-eclipse-backend.onrender.com'
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only in development
+# Permitir todas las origins temporalmente para debug
+CORS_ALLOW_ALL_ORIGINS = True
 
 # CSRF Configuration for API
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='https://eclipse-backend-so8x.onrender.com,http://localhost:3000,http://127.0.0.1:3000'
+    default='https://eclipse-backend-so8x.onrender.com,https://hotel-motel-eclipse-backend.onrender.com,http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
 
 # Para APIs REST, podemos exentar ciertas rutas del CSRF

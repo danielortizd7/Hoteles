@@ -15,4 +15,12 @@ services:
         value: False
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: CORS_ALLOW_ALL_ORIGINS
+        value: True
     healthCheckPath: /api/
+
+databases:
+  - name: hotel-database
+    plan: free
+    databaseName: hotel_db
+    user: hotel_user
