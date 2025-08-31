@@ -41,61 +41,64 @@ class Command(BaseCommand):
         # Crear tipos de habitaciones
         room_types_data = [
             {
-                'name': 'standard',
+                'nombre': 'Estándar',
                 'description': 'Habitación estándar con servicios básicos',
-                'base_price_5h': 40000,
+                'precio_base': 40000,
+                'precio_hora_adicional': 5000,
                 'icon': '🏠'
             },
             {
-                'name': 'love_machine',
+                'nombre': 'Con Máquina del Amor',
                 'description': 'Habitación con máquina del amor y servicios especiales',
-                'base_price_5h': 45000,
+                'precio_base': 45000,
+                'precio_hora_adicional': 6000,
                 'icon': '💕'
             },
             {
-                'name': 'suite',
+                'nombre': 'Suite',
                 'description': 'Suite de lujo con jacuzzi y servicios premium',
-                'base_price_5h': 60000,
+                'precio_base': 60000,
+                'precio_hora_adicional': 8000,
                 'icon': '👑'
             }
         ]
         
         for room_type_data in room_types_data:
             room_type, created = RoomType.objects.get_or_create(
-                name=room_type_data['name'],
+                nombre=room_type_data['nombre'],
                 defaults=room_type_data
             )
             if created:
-                self.stdout.write(f'✓ Tipo de habitación creado: {room_type.get_name_display()}')
+                self.stdout.write(f'✓ Tipo de habitación creado: {room_type.nombre}')
         
         # Crear habitaciones
-        room_types = {rt.name: rt for rt in RoomType.objects.all()}
+        room_types = {rt.nombre: rt for rt in RoomType.objects.all()}
         rooms_data = [
             # Habitaciones estándar
-            {'number': '1', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '2', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '3', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '4', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '7', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '8', 'room_type': room_types['standard'], 'floor': 1},
-            {'number': '9', 'room_type': room_types['standard'], 'floor': 1},
+            {'numero': '1', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '2', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '3', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '4', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '7', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '8', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
+            {'numero': '9', 'tipo_habitacion': room_types['Estándar'], 'piso': 1},
             
             # Habitaciones con máquina del amor
-            {'number': '5', 'room_type': room_types['love_machine'], 'floor': 1},
-            {'number': '6', 'room_type': room_types['love_machine'], 'floor': 1},
+            {'numero': '5', 'tipo_habitacion': room_types['Con Máquina del Amor'], 'piso': 1},
+            {'numero': '6', 'tipo_habitacion': room_types['Con Máquina del Amor'], 'piso': 1},
             
             # Suites
-            {'number': '10', 'room_type': room_types['suite'], 'floor': 2},
-            {'number': '11', 'room_type': room_types['suite'], 'floor': 2},
+            {'numero': '10', 'tipo_habitacion': room_types['Suite'], 'piso': 2},
+            {'numero': '11', 'tipo_habitacion': room_types['Suite'], 'piso': 2},
         ]
         
         for room_data in rooms_data:
             room, created = Room.objects.get_or_create(
-                number=room_data['number'],
+                numero=room_data['numero'],
                 defaults=room_data
             )
             if created:
-                self.stdout.write(f'✓ Habitación creada: {room.number} - {room.room_type}')
+                self.stdout.write(f'✓ Habitación creada: {room.numero} - {room.tipo_habitacion}')
         
         # Crear categorías de productos
         categories_data = [
