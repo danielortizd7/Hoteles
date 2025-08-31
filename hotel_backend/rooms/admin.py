@@ -3,26 +3,29 @@ from .models import Room, RoomType
 
 @admin.register(RoomType)
 class RoomTypeAdmin(admin.ModelAdmin):
-    list_display = ('get_name_display', 'base_price_5h', 'icon', 'created_at')
-    list_filter = ('name', 'created_at')
-    search_fields = ('name', 'description')
-    ordering = ('name',)
+    list_display = ('nombre', 'precio_base', 'precio_hora_adicional', 'icon', 'created_at')
+    list_filter = ('nombre', 'created_at')
+    search_fields = ('nombre', 'description')
+    ordering = ('nombre',)
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('number', 'room_type', 'status', 'floor', 'created_at')
-    list_filter = ('status', 'room_type', 'floor', 'created_at')
-    search_fields = ('number', 'notes')
-    ordering = ('number',)
+    list_display = ('numero', 'tipo_habitacion', 'estado', 'precio_base', 'piso', 'created_at')
+    list_filter = ('estado', 'tipo_habitacion', 'piso', 'created_at')
+    search_fields = ('numero', 'descripcion', 'notas')
+    ordering = ('numero',)
     
-    list_editable = ('status',)
+    list_editable = ('estado',)
     
     fieldsets = (
         ('Información Básica', {
-            'fields': ('number', 'room_type', 'floor')
+            'fields': ('numero', 'tipo_habitacion', 'piso', 'descripcion')
+        }),
+        ('Precios y Horas', {
+            'fields': ('precio_base', 'precio_hora_adicional', 'horas_base', 'cobro_adicional')
         }),
         ('Estado y Notas', {
-            'fields': ('status', 'notes')
+            'fields': ('estado', 'notas')
         }),
         ('Fechas', {
             'fields': ('created_at', 'updated_at'),
