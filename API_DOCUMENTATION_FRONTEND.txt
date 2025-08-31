@@ -1,0 +1,744 @@
+===============================================================================
+                    HOTEL MOTEL ECLIPSE - API DOCUMENTATION
+                         GUÍA COMPLETA PARA FRONTEND
+===============================================================================
+
+🌐 BASE URL PRODUCCIÓN: https://eclipse-backend-so8x.onrender.com
+🌐 BASE URL DESARROLLO: http://127.0.0.1:8000
+
+===============================================================================
+                              🔑 AUTENTICACIÓN
+===============================================================================
+
+📌 HEADERS GLOBALES PARA REQUESTS AUTENTICADOS:
+Content-Type: application/json
+Authorization: Bearer {JWT_TOKEN}
+
+📌 FORMATO DE FECHA Y HORA:
+- Zona horaria: America/Bogota (UTC-05:00)
+- Formato: YYYY-MM-DDThh:mm:ss-05:00
+- Ejemplo: "2025-08-29T15:30:00-05:00" (3:30 PM hora Colombia)
+- Use formato 24 horas (00:00 a 23:59)
+
+📌 TIPOS DE PERMISOS:
+- 🟢 PÚBLICO: Sin autenticación
+- 🔒 JWT: Requiere token JWT válido
+- 🛡️ RECEPCIONISTA+: Recepcionista, Admin o Super Admin
+- 👑 ADMIN+: Admin o Super Admin solamente
+- 🔱 SUPER ADMIN: Solo Super Administrador
+
+===============================================================================
+                            🔐 AUTENTICACIÓN Y SETUP
+===============================================================================
+
+1. CREAR SUPER ADMIN (SETUP INICIAL) - 🟢 PÚBLICO
+   POST /api/accounts/create-super-admin/
+   
+   BODY:
+   {
+       "username": "superadmin",
+       "email": "superadmin@moteleclipse.com",
+       "password": "SuperAdmin123!",
+       "first_name": "Super",
+       "last_name": "Administrador",
+       "phone": "+1234567890"
+   }
+
+2. LOGIN JWT - 🟢 PÚBLICO
+   POST /api/accounts/jwt/login/
+   
+   BODY:
+   {
+       "username": "tu_usuario",
+       "password": "tu_contraseña"
+   }
+   
+   RESPUESTA:
+   {
+       "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+       "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+   }
+
+3. REFRESH TOKEN - 🟢 PÚBLICO
+   POST /api/accounts/jwt/refresh/
+   
+   BODY:
+   {
+       "refresh": "tu_refresh_token"
+   }
+
+4. LOGOUT - 🔒 JWT
+   POST /api/accounts/logout/
+   
+   BODY: {} (vacío)
+
+===============================================================================
+                            👥 GESTIÓN DE USUARIOS
+===============================================================================
+
+5. CREAR ADMINISTRADOR - 🔱 SUPER ADMIN
+   POST /api/accounts/usuarios/create_admin/
+   
+   BODY:
+   {
+       "username": "admin_hotel",
+       "email": "admin@moteleclipse.com",
+       "password": "AdminHotel123!",
+       "password_confirm": "AdminHotel123!",
+       "first_name": "Juan",
+       "last_name": "Pérez",
+       "phone": "+1234567891"
+   }
+
+6. CREAR RECEPCIONISTA - 👑 ADMIN+
+   POST /api/accounts/usuarios/create_receptionist/
+   
+   BODY:
+   {
+       "username": "recepcionista1",
+       "email": "recepcion@moteleclipse.com",
+       "password": "Recepcion123!",
+       "password_confirm": "Recepcion123!",
+       "first_name": "María",
+       "last_name": "González",
+       "phone": "+1234567892"
+   }
+
+7. LISTAR USUARIOS - 👑 ADMIN+
+   GET /api/accounts/usuarios/
+   
+   NO BODY (solo GET)
+
+8. VER USUARIO ESPECÍFICO - 👑 ADMIN+
+   GET /api/accounts/usuarios/{id}/
+   
+   NO BODY (solo GET)
+
+9. ACTUALIZAR USUARIO - 👑 ADMIN+
+   PUT /api/accounts/usuarios/{id}/
+   
+   BODY:
+   {
+       "username": "usuario_actualizado",
+       "email": "nuevo_email@example.com",
+       "first_name": "Nuevo Nombre",
+       "last_name": "Nuevo Apellido",
+       "phone": "+0987654321",
+       "role": "receptionist"
+   }
+
+10. ELIMINAR USUARIO - 👑 ADMIN+
+    DELETE /api/accounts/usuarios/{id}/
+    
+    NO BODY (solo DELETE)
+
+11. LISTAR RECEPCIONISTAS - 👑 ADMIN+
+    GET /api/accounts/usuarios/list_receptionists/
+    
+    NO BODY (solo GET)
+
+12. VER PERFIL PROPIO - 🔒 JWT
+    GET /api/accounts/profile/
+    
+    NO BODY (solo GET)
+
+===============================================================================
+                            🏠 GESTIÓN DE HABITACIONES
+===============================================================================
+
+📌 SISTEMA DE PRECIOS Y HORAS:
+- precio_base: Costo fijo inicial de la habitación (ej: 40,000 COP)
+- horas_base: Cantidad de horas incluidas en el precio base (ej: 3 horas)
+- precio_hora_adicional: Costo por cada hora extra (ej: 5,000 COP)
+- cobro_adicional: Indica si se aplican cobros por horas extras
+
+Ejemplo de cálculo:
+- Precio base: 40,000 COP (incluye 3 horas)
+- Uso por 5 horas = 40,000 + (2 horas extra × 5,000) = 50,000 COP
+
+🌟 SISTEMA DE AUTO-CARGA DE DATOS POR TIPO (ACTUALIZADO):
+Cuando selecciones un tipo de habitación, el sistema automáticamente carga:
+- precio_base del tipo seleccionado
+- precio_hora_adicional del tipo seleccionado  
+- descripcion predeterminada del tipo
+- Configuración estándar de horas y cobros adicionales
+
+12A. CREAR TIPO DE HABITACIÓN - 👑 ADMIN+
+     POST /api/rooms/tipos/
+     
+     BODY:
+     {
+         "name": "suite ejecutiva premium",
+         "description": "Habitación de lujo con todas las comodidades",
+         "precio_base": 200000,
+         "precio_hora_adicional": 8000
+     }
+     
+     RESPUESTA EXITOSA (201):
+     {
+         "id": 3,
+         "name": "suite ejecutiva premium", 
+         "description": "Habitación de lujo con todas las comodidades",
+         "precio_base": "200000.00",
+         "precio_hora_adicional": "8000.00",
+         "created_at": "2025-08-30T04:55:00Z"
+     }
+
+12B. OBTENER DATOS DE AUTOCOMPLETADO - 🛡️ RECEPCIONISTA+
+     GET /api/rooms/tipos/{id}/datos_autocompletado/
+     
+     RESPUESTA EXITOSA (200):
+     {
+         "id": 3,
+         "name": "suite ejecutiva premium",
+         "precio_base": 200000,
+         "descripcion": "Habitación de lujo con todas las comodidades",
+         "datos_predeterminados": {
+             "precio_base": 200000,
+             "precio_hora_adicional": 8000,
+             "descripcion": "Habitación de lujo con todas las comodidades",
+             "horas_base": 5,
+             "cobro_adicional": true,
+             "estado": "disponible"
+         }
+     }
+
+13. CREAR HABITACIÓN CON AUTO-CARGA - 👑 ADMIN+
+    POST /api/rooms/
+    
+    BODY (sistema optimizado con auto-carga automática):
+    {
+        "numero": "105",
+        "tipo_habitacion": 3,           // ID del tipo de habitación creado
+        "estado": "disponible"
+    }
+    
+    RESPUESTA EXITOSA (201) EN ESPAÑOL:
+    {
+        "id": 4,
+        "numero": "105",
+        "estado": "disponible",
+        "disponible": true,
+        "fecha_creacion": "2025-08-30T04:55:00Z",
+        
+        "tipo_habitacion": {
+            "id": 3,
+            "nombre": "suite ejecutiva premium",
+            "descripcion": "Habitación de lujo con todas las comodidades"
+        },
+        
+        "configuracion_precios": {
+            "precio_base": 200000.0,           // AUTO-CARGADO del tipo
+            "precio_hora_adicional": 8000.0,   // AUTO-CARGADO del tipo  
+            "horas_incluidas": 3,              // Valor por defecto
+            "cobra_horas_extras": true         // Valor por defecto
+        }
+    }
+
+14. LISTAR TIPOS DE HABITACIÓN - 🛡️ RECEPCIONISTA+
+    GET /api/rooms/tipos/
+    
+    NO BODY (solo GET)
+
+15. LISTAR HABITACIONES - 🛡️ RECEPCIONISTA+
+    GET /api/rooms/
+    
+    NO BODY (solo GET)
+
+16. ACTUALIZAR HABITACIÓN - 🛡️ RECEPCIONISTA+
+    PUT /api/rooms/{id}/
+    
+    BODY:
+    {
+        "numero": "101",
+        "tipo_habitacion": 1,
+        "estado": "disponible",
+        "precio_base": 40000,           // precio fijo inicial en pesos colombianos
+        "precio_hora_adicional": 5000,   // precio por cada hora extra en pesos colombianos
+        "descripcion": "Habitación con vista al jardín",
+        "politica_horas": {
+            "horas_base": 3,            // cantidad de horas incluidas en el precio base
+            "cobro_adicional": true      // indica si se cobra por horas adicionales
+        }
+    }
+
+17. ACTUALIZACIÓN PARCIAL - 🛡️ RECEPCIONISTA+
+    PATCH /api/rooms/{id}/
+    
+    BODY:
+    {
+        "estado": "disponible",   // valores posibles: "disponible", "ocupada", "limpieza"
+        "registrado_por": "recepcionista1", // nombre de usuario del recepcionista
+        "fecha_registro": "2025-08-29T09:30:00-05:00" // formato: YYYY-MM-DDThh:mm:ss-05:00 (hora Bogotá)
+    }
+
+18. CAMBIAR ESTADO HABITACIÓN - 🛡️ RECEPCIONISTA+
+    POST /api/rooms/{id}/change_status/
+    
+    BODY:
+    {
+        "estado": "limpieza",   // valores posibles: "disponible", "ocupada", "limpieza"
+        "registrado_por": "recepcionista1", // nombre de usuario del recepcionista
+        "fecha_registro": "2025-08-29T09:35:00-05:00" // formato: YYYY-MM-DDThh:mm:ss-05:00 (hora Bogotá)
+    }
+
+19. ELIMINAR HABITACIÓN - 👑 ADMIN+
+    DELETE /api/rooms/{id}/
+    
+    NO BODY (solo DELETE)
+
+20. HABITACIONES DISPONIBLES - 🛡️ RECEPCIONISTA+
+    GET /api/rooms/disponibles/
+    
+    NO BODY (solo GET)
+
+21. DASHBOARD HABITACIONES - 🛡️ RECEPCIONISTA+
+    GET /api/rooms/dashboard/
+    
+    NO BODY (solo GET)
+
+===============================================================================
+                           🏷️ TIPOS DE HABITACIÓN
+===============================================================================
+
+22. LISTAR TIPOS DE HABITACIÓN - 👑 ADMIN+
+    GET /api/rooms/tipos/
+    
+    NO BODY (solo GET)
+
+23. CREAR TIPO DE HABITACIÓN - 👑 ADMIN+
+    POST /api/rooms/tipos/
+    
+    BODY:
+    {
+        "nombre": "Suite Ejecutiva",
+        "descripcion": "Habitación amplia con sala de estar",
+        "precio_base": 200.00,
+        "capacidad": 4,
+        "amenidades": "WiFi, TV, Minibar, Aire Acondicionado"
+    }
+
+24. VER TIPO ESPECÍFICO - 👑 ADMIN+
+    GET /api/rooms/tipos/{id}/
+    
+    NO BODY (solo GET)
+
+25. ACTUALIZAR TIPO - 👑 ADMIN+
+    PUT /api/rooms/tipos/{id}/
+    
+    BODY:
+    {
+        "nombre": "Suite Premium",
+        "descripcion": "Habitación de lujo con jacuzzi",
+        "precio_base": 250.00,
+        "capacidad": 2,
+        "amenidades": "WiFi, TV 55', Minibar, Jacuzzi, Vista panorámica"
+    }
+
+26. ELIMINAR TIPO - 👑 ADMIN+
+    DELETE /api/rooms/tipos/{id}/
+    
+    NO BODY (solo DELETE)
+
+===============================================================================
+                            📦 GESTIÓN DE INVENTARIO
+===============================================================================
+
+27. LISTAR PRODUCTOS - 🔒 JWT
+    GET /api/inventory/productos/
+    
+    NO BODY (solo GET)
+
+28. CREAR PRODUCTO - 🔒 JWT
+    POST /api/inventory/productos/
+    
+    BODY:
+    {
+        "name": "Toallas de baño",
+        "description": "Toallas de algodón 100%",
+        "category": 1,
+        "sku": "TOW-001",
+        "current_stock": 50,
+        "min_stock": 10,
+        "max_stock": 100,
+        "unit_price": 15.99,
+        "supplier": "Textiles SA"
+    }
+
+29. VER PRODUCTO ESPECÍFICO - 🔒 JWT
+    GET /api/inventory/productos/{id}/
+    
+    NO BODY (solo GET)
+
+30. ACTUALIZAR PRODUCTO - 🔒 JWT
+    PUT /api/inventory/productos/{id}/
+    
+    BODY:
+    {
+        "name": "Toallas premium",
+        "description": "Toallas de algodón egipcio",
+        "category": 1,
+        "sku": "TOW-001",
+        "current_stock": 45,
+        "min_stock": 15,
+        "max_stock": 120,
+        "unit_price": 18.99,
+        "supplier": "Textiles Premium SA"
+    }
+
+31. ELIMINAR PRODUCTO - 🔒 JWT
+    DELETE /api/inventory/productos/{id}/
+    
+    NO BODY (solo DELETE)
+
+===============================================================================
+                            🏷️ CATEGORÍAS DE INVENTARIO
+===============================================================================
+
+32. LISTAR CATEGORÍAS - 🔒 JWT
+    GET /api/inventory/categorias/
+    
+    NO BODY (solo GET)
+
+33. CREAR CATEGORÍA - 🔒 JWT
+    POST /api/inventory/categorias/
+    
+    BODY:
+    {
+        "name": "Textiles",
+        "description": "Productos textiles para habitaciones",
+        "code": "TXT"
+    }
+
+34. VER CATEGORÍA ESPECÍFICA - 🔒 JWT
+    GET /api/inventory/categorias/{id}/
+    
+    NO BODY (solo GET)
+
+35. ACTUALIZAR CATEGORÍA - 🔒 JWT
+    PUT /api/inventory/categorias/{id}/
+    
+    BODY:
+    {
+        "name": "Textiles Premium",
+        "description": "Productos textiles de alta calidad",
+        "code": "TXTP"
+    }
+
+36. ELIMINAR CATEGORÍA - 🔒 JWT
+    DELETE /api/inventory/categorias/{id}/
+    
+    NO BODY (solo DELETE)
+
+===============================================================================
+                           📊 MOVIMIENTOS DE STOCK
+===============================================================================
+
+37. LISTAR MOVIMIENTOS - 🔒 JWT
+    GET /api/inventory/movimientos-stock/
+    
+    NO BODY (solo GET)
+
+38. CREAR MOVIMIENTO - 🔒 JWT
+    POST /api/inventory/movimientos-stock/
+    
+    BODY:
+    {
+        "product": 1,
+        "movement_type": "IN",
+        "quantity": 20,
+        "reason": "Compra nueva",
+        "reference": "ORD-001",
+        "notes": "Recibido en buen estado"
+    }
+
+39. VER MOVIMIENTO ESPECÍFICO - 🔒 JWT
+    GET /api/inventory/movimientos-stock/{id}/
+    
+    NO BODY (solo GET)
+
+40. ACTUALIZAR MOVIMIENTO - 🔒 JWT
+    PUT /api/inventory/movimientos-stock/{id}/
+    
+    BODY:
+    {
+        "product": 1,
+        "movement_type": "OUT",
+        "quantity": 5,
+        "reason": "Uso en habitación 101",
+        "reference": "USE-001",
+        "notes": "Consumo normal"
+    }
+
+41. ELIMINAR MOVIMIENTO - 🔒 JWT
+    DELETE /api/inventory/movimientos-stock/{id}/
+    
+    NO BODY (solo DELETE)
+
+===============================================================================
+                              🔧 ENDPOINTS DE UTILIDAD
+===============================================================================
+
+42. HEALTH CHECK - 🟢 PÚBLICO
+    GET /api/accounts/health/
+    
+    NO BODY (solo GET)
+
+43. DEBUG INFO - 🟢 PÚBLICO
+    GET /api/accounts/debug/
+    
+    NO BODY (solo GET)
+
+44. ROOT API - 🟢 PÚBLICO
+    GET /api/
+    
+    NO BODY (solo GET)
+
+===============================================================================
+                           📱 CÓDIGOS DE RESPUESTA HTTP
+===============================================================================
+
+200 - OK: Solicitud exitosa
+201 - CREATED: Recurso creado exitosamente
+204 - NO CONTENT: Solicitud exitosa sin contenido
+400 - BAD REQUEST: Error en los datos enviados
+401 - UNAUTHORIZED: No autorizado (token inválido/faltante)
+403 - FORBIDDEN: Permisos insuficientes
+404 - NOT FOUND: Recurso no encontrado
+500 - INTERNAL SERVER ERROR: Error del servidor
+
+===============================================================================
+                           🚨 POSIBLES ERRORES COMUNES
+===============================================================================
+
+ERROR: "No active account found with the given credentials"
+CAUSA: Usuario no existe o credenciales incorrectas
+SOLUCIÓN: Verificar username/password o crear usuario
+
+ERROR: "Token is invalid or expired"
+CAUSA: JWT token expirado o malformado
+SOLUCIÓN: Hacer login nuevamente
+
+ERROR: "You do not have permission to perform this action"
+CAUSA: Rol insuficiente para la acción
+SOLUCIÓN: Usar cuenta con permisos apropiados
+
+ERROR: "This field is required"
+CAUSA: Campo obligatorio faltante en el body
+SOLUCIÓN: Incluir todos los campos requeridos
+
+ERROR: "User with this username already exists"
+CAUSA: Username duplicado
+SOLUCIÓN: Usar un username único
+
+===============================================================================
+                            📋 FLUJO DE TRABAJO TÍPICO
+===============================================================================
+
+1. SETUP INICIAL (Una sola vez):
+   - Crear super admin
+   - Crear administradores
+   - Crear recepcionistas
+
+2. AUTENTICACIÓN:
+   - Login con credenciales
+   - Guardar access token
+   - Usar token en headers para requests
+
+3. GESTIÓN DIARIA:
+   - Ver habitaciones disponibles
+   - Cambiar estados de habitaciones
+   - Gestionar inventario
+   - Ver reportes
+
+4. ADMINISTRACIÓN:
+   - Crear/editar habitaciones
+   - Gestionar tipos de habitación
+   - Crear usuarios
+   - Gestionar categorías
+
+===============================================================================
+                      🔥 EJEMPLOS DE CÓDIGO FRONTEND (JAVASCRIPT)
+===============================================================================
+
+💡 IMPLEMENTACIÓN DE AUTO-CARGA DE HABITACIONES
+
+// 1. Función para cargar tipos de habitación
+async function cargarTiposHabitacion() {
+    const response = await fetch('/api/habitaciones/tipos/', {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    return response.json();
+}
+
+// 2. Función para obtener datos de autocompletado
+async function obtenerDatosAutocompletado(tipoId) {
+    const response = await fetch(`/api/habitaciones/tipos/${tipoId}/datos_autocompletado/`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    return response.json();
+}
+
+// 3. Manejador de cambio de tipo de habitación
+const onTipoHabitacionChange = async (tipoId) => {
+    try {
+        const datos = await obtenerDatosAutocompletado(tipoId);
+        
+        // Auto-completar formulario
+        document.getElementById('precio_base').value = datos.datos_predeterminados.precio_base;
+        document.getElementById('precio_hora_adicional').value = datos.datos_predeterminados.precio_hora_adicional;
+        document.getElementById('descripcion').value = datos.datos_predeterminados.descripcion;
+        document.getElementById('horas_base').value = datos.datos_predeterminados.horas_base;
+        document.getElementById('cobro_adicional').checked = datos.datos_predeterminados.cobro_adicional;
+        
+        // Mostrar mensaje de confirmación
+        console.log(`Datos cargados automáticamente para tipo: ${datos.display_name}`);
+        
+    } catch (error) {
+        console.error('Error al cargar datos de autocompletado:', error);
+    }
+};
+
+// 4. Función para crear habitación con auto-carga
+async function crearHabitacionConAutoCarga(formData) {
+    const response = await fetch('/api/habitaciones/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+            ...formData,
+            auto_cargar_datos: true  // Habilitar auto-carga en backend
+        })
+    });
+    
+    if (response.ok) {
+        const habitacion = await response.json();
+        console.log('Habitación creada exitosamente:', habitacion);
+        return habitacion;
+    } else {
+        const error = await response.json();
+        console.error('Error al crear habitación:', error);
+        throw error;
+    }
+}
+
+// 5. Ejemplo completo de uso en formulario
+document.addEventListener('DOMContentLoaded', async () => {
+    // Cargar tipos de habitación al inicializar
+    const tipos = await cargarTiposHabitacion();
+    const selectTipo = document.getElementById('tipo_habitacion');
+    
+    tipos.results.forEach(tipo => {
+        const option = document.createElement('option');
+        option.value = tipo.id;
+        option.textContent = tipo.display_name;
+        selectTipo.appendChild(option);
+    });
+    
+    // Configurar evento de cambio de tipo
+    selectTipo.addEventListener('change', (e) => {
+        if (e.target.value) {
+            onTipoHabitacionChange(e.target.value);
+        }
+    });
+    
+    // Configurar envío de formulario
+    document.getElementById('form-habitacion').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            numero: document.getElementById('numero').value,
+            tipo_habitacion: parseInt(document.getElementById('tipo_habitacion').value),
+            piso: parseInt(document.getElementById('piso').value),
+            notas: document.getElementById('notas').value
+        };
+        
+        try {
+            await crearHabitacionConAutoCarga(formData);
+            alert('Habitación creada exitosamente!');
+            // Redirigir o limpiar formulario
+        } catch (error) {
+            alert('Error al crear habitación: ' + JSON.stringify(error));
+        }
+    });
+});
+
+===============================================================================
+                    🚀 FLUJO COMPLETO ACTUALIZADO - HABITACIONES
+===============================================================================
+
+🔥 FLUJO OPTIMIZADO PARA CREAR HABITACIONES CON AUTO-CARGA:
+
+1️⃣ CREAR TIPO DE HABITACIÓN (Una sola vez):
+   POST /api/rooms/tipos/
+   {
+       "name": "suite presidencial",
+       "description": "Suite de lujo con todas las comodidades premium",
+       "precio_base": 300000,
+       "precio_hora_adicional": 10000
+   }
+   
+   RESPUESTA: { "id": 5, "name": "suite presidencial", ... }
+
+2️⃣ CREAR HABITACIONES (Múltiples usando el tipo):
+   POST /api/rooms/
+   {
+       "numero": "201",
+       "tipo_habitacion": 5,        // ← ID del tipo creado
+       "estado": "disponible"
+   }
+   
+   RESPUESTA AUTOMÁTICA:
+   {
+       "id": 10,
+       "numero": "201", 
+       "estado": "disponible",
+       "disponible": true,
+       "fecha_creacion": "2025-08-30T05:00:00Z",
+       
+       "tipo_habitacion": {
+           "id": 5,
+           "nombre": "suite presidencial",
+           "descripcion": "Suite de lujo con todas las comodidades premium"
+       },
+       
+       "configuracion_precios": {
+           "precio_base": 300000.0,        // ✅ AUTO-CARGADO
+           "precio_hora_adicional": 10000.0, // ✅ AUTO-CARGADO
+           "horas_incluidas": 3,           // ✅ Valor por defecto
+           "cobra_horas_extras": true      // ✅ Valor por defecto
+       }
+   }
+
+🎯 VENTAJAS DEL SISTEMA ACTUAL:
+- ✅ Respuesta completamente en español
+- ✅ Sin campos innecesarios (piso, notas)
+- ✅ Sin datos duplicados
+- ✅ Auto-carga automática de precios del tipo
+- ✅ Estructura clara y organizada
+- ✅ Fácil de usar desde el frontend
+
+===============================================================================
+                              📞 CONTACTO DE SOPORTE
+===============================================================================
+
+Para dudas técnicas sobre la API:
+- Revisar códigos de error HTTP
+- Verificar formato de JSON en requests
+- Confirmar que headers incluyan Authorization con JWT
+- Validar que el usuario tenga permisos necesarios
+
+===============================================================================
+                                🏁 FIN DEL DOCUMENTO
+===============================================================================
+
+Última actualización: 24 de Agosto, 2025
+Estado del API: ✅ FUNCIONANDO
+URL Producción: https://eclipse-backend-so8x.onrender.com
+Versión: 1.0.0
